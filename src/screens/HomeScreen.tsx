@@ -52,7 +52,7 @@ export default function HomeScreen() {
       <Text style={styles.greet}>
         {`Hey, ${userName.fullName.split(" ")[0]} 👋`}
       </Text>
-      <Text style={styles.headline}>{"Personalize your\nConsultation"}</Text>
+      <Text style={styles.headline}>{"Personalize your Consultation"}</Text>
 
       {/* Tabs selector */}
       <View style={{ marginTop: spacing.md }}>

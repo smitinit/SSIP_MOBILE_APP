@@ -12,6 +12,7 @@
   "dependencies": {
     "@clerk/clerk-expo": "^2.14.15",
     "@expo/vector-icons": "^14.1.0",
+    "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-firebase/app": "^23.0.0",
     "@react-native-firebase/firestore": "^23.0.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
@@ -38,6 +39,7 @@
     "react-dom": "19.0.0",
     "react-native": "0.79.5",
     "react-native-appwrite": "^0.11.0",
+    "react-native-async-storage": "^0.0.1",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "^5.4.0",

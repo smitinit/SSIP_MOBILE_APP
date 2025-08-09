@@ -1,12 +1,18 @@
 import React from "react";
-import { StyleSheet, View, Text, Pressable } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Pressable,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { useSignUp } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import { NButton } from "@/ui/button";
-import { NInput } from "@/ui/input";
-import { NCard } from "@/ui/card";
 import { spacing } from "@/design/tokens";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function getClerkErrorMessage(err: unknown) {
   const e = err as any;
@@ -27,7 +33,6 @@ export default function SignUpScreen() {
   const [password, setPassword] = React.useState("");
   const [confirm, setConfirm] = React.useState("");
   const [showPw, setShowPw] = React.useState(false);
-  const [showConfirm, setShowConfirm] = React.useState(false);
   const [pendingVerification, setPendingVerification] = React.useState(false);
   const [code, setCode] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -46,6 +51,7 @@ export default function SignUpScreen() {
       console.error("Sign-up error:", JSON.stringify(err, null, 2));
     } finally {
       setLoading(false);
+      await AsyncStorage.setItem("onboardingComplete", "true");
     }
   };
 
@@ -72,229 +78,261 @@ export default function SignUpScreen() {
   if (pendingVerification) {
     return (
       <View style={vStyles.screen}>
-        <View style={[vStyles.blob, vStyles.blobTopRight]} />
-        <View style={[vStyles.blob, vStyles.blobBottomLeft]} />
-        <View style={vStyles.container}>
-          <Text style={vStyles.bigTitle}>VERIFY</Text>
-          <NCard style={vStyles.card}>
-            {error ? <Text style={sStyles.errorText}>{error}</Text> : null}
-            <NInput
-              label="Verification code"
-              value={code}
-              onChangeText={setCode}
-              keyboardType="number-pad"
-              placeholder="123456"
-              maxLength={8}
-              style={sStyles.inputPlain}
-            />
-            <NButton
-              title={loading ? "Verifying..." : "Verify"}
-              fullWidth
-              onPress={onVerifyPress}
-              loading={loading}
-              style={sStyles.primaryCta}
-            />
-            <View style={sStyles.footerRow}>
-              <Text style={sStyles.footerText}>Made a mistake?</Text>
-              <Link href="/(auth)/sign-in" style={sStyles.footerLink}>
-                Back to sign in
-              </Link>
-            </View>
-          </NCard>
+        <View style={vStyles.header}>
+          <Pressable
+            onPress={() => router.back()}
+            hitSlop={10}
+            style={vStyles.backBtn}
+          >
+            <Ionicons name="chevron-back" size={22} color="#111827" />
+          </Pressable>
+          <Text style={vStyles.brand}>
+            {"Nutr"}
+            <Text style={vStyles.brandAccent}>{"izy"}</Text>
+          </Text>
+          <View style={{ width: 36 }} />
+        </View>
+
+        <View style={vStyles.panel}>
+          <Text style={vStyles.subtitle}>{"Email verification"}</Text>
+          <Text style={vStyles.title}>{"Enter the 6‑digit code"}</Text>
+
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+          <TextInput
+            placeholder="123456"
+            keyboardType="number-pad"
+            value={code}
+            onChangeText={setCode}
+            maxLength={8}
+            style={vStyles.underlineInput}
+            placeholderTextColor="#9CA3AF"
+          />
+
+          <NButton
+            title={loading ? "Verifying..." : "Verify"}
+            fullWidth
+            onPress={onVerifyPress}
+            loading={loading}
+            style={vStyles.primaryCta}
+          />
+
+          <View style={styles.footerRow}>
+            <Text style={styles.footerText}>{"Made a mistake?"}</Text>
+            <Link href="/(auth)/sign-in" style={styles.footerLink}>
+              Back to sign in
+            </Link>
+          </View>
         </View>
       </View>
     );
   }
 
+  const isEmailValid = /\S+@\S+\.\S+/.test(emailAddress.trim());
+
   return (
-    <View style={sStyles.screen}>
-      {/* Background blobs */}
-      <View style={[sStyles.blob, sStyles.blobTopRight]} />
-      <View style={[sStyles.blob, sStyles.blobBottomLeft]} />
+    <View style={styles.screen}>
+      {/* Light header with back and brand */}
+      <View style={styles.header}>
+        <Pressable
+          onPress={() => router.back()}
+          hitSlop={10}
+          style={styles.backBtn}
+        >
+          <Ionicons name="chevron-back" size={22} color="#111827" />
+        </Pressable>
+        <Text style={styles.brand}>
+          {"Nutr"}
+          <Text style={styles.brandAccent}>{"izy"}</Text>
+        </Text>
+        <View style={{ width: 36 }} />
+      </View>
 
-      <View style={sStyles.container}>
-        <Text style={sStyles.bigTitle}>REGISTER</Text>
-        <NCard style={sStyles.card}>
-          {error ? <Text style={sStyles.errorText}>{error}</Text> : null}
+      {/* Rounded white panel */}
+      <View style={styles.panel}>
+        <Text style={styles.subtitle}>{"Let’s create your account"}</Text>
+        <Text style={styles.title}>{"You have been Missed!"}</Text>
 
-          {/* Email */}
-          <View style={sStyles.inputWrap}>
-            <Ionicons
-              name="mail-outline"
-              size={18}
-              color="#111827"
-              style={sStyles.leadingIcon}
-            />
-            <NInput
-              placeholder="Email"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              value={emailAddress}
-              onChangeText={setEmailAddress}
-              style={sStyles.input}
-            />
-          </View>
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-          {/* Password */}
-          <View style={sStyles.inputWrap}>
-            <Ionicons
-              name="lock-closed-outline"
-              size={18}
-              color="#111827"
-              style={sStyles.leadingIcon}
-            />
-            <NInput
-              placeholder="Password"
-              secureTextEntry={!showPw}
-              value={password}
-              onChangeText={setPassword}
-              style={sStyles.input}
-            />
-            <Pressable
-              onPress={() => setShowPw((s) => !s)}
-              style={sStyles.trailingIconBtn}
-              hitSlop={10}
-            >
-              <Ionicons
-                name={showPw ? "eye-off-outline" : "eye-outline"}
-                size={20}
-                color="#111827"
-              />
-            </Pressable>
-          </View>
-
-          {/* Confirm Password (UI only; logic unchanged) */}
-          <View style={sStyles.inputWrap}>
-            <Ionicons
-              name="lock-closed-outline"
-              size={18}
-              color="#111827"
-              style={sStyles.leadingIcon}
-            />
-            <NInput
-              placeholder="Confirm Password"
-              secureTextEntry={!showConfirm}
-              value={confirm}
-              onChangeText={setConfirm}
-              style={sStyles.input}
-            />
-            <Pressable
-              onPress={() => setShowConfirm((s) => !s)}
-              style={sStyles.trailingIconBtn}
-              hitSlop={10}
-            >
-              <Ionicons
-                name={showConfirm ? "eye-off-outline" : "eye-outline"}
-                size={20}
-                color="#111827"
-              />
-            </Pressable>
-          </View>
-
-          <NButton
-            title={loading ? "Creating..." : "NEXT"}
-            fullWidth
-            onPress={onSignUpPress}
-            loading={loading}
-            style={sStyles.primaryCta}
+        {/* Email with underline and check */}
+        <View style={styles.fieldRow}>
+          <Text style={styles.fieldLabel}>Your Email / Username</Text>
+          <View style={styles.trailingSpace} />
+        </View>
+        <View style={styles.inputLineWrap}>
+          <Ionicons
+            name="mail-outline"
+            size={18}
+            color="#111827"
+            style={styles.leadingIcon}
           />
+          <TextInput
+            placeholder="Email"
+            placeholderTextColor="#9CA3AF"
+            autoCapitalize="none"
+            keyboardType="email-address"
+            value={emailAddress}
+            onChangeText={setEmailAddress}
+            style={[styles.underlineInput, { paddingLeft: 36 }]}
+          />
+          {isEmailValid ? (
+            <View style={styles.successBadge}>
+              <Ionicons name="checkmark" size={16} color="#fff" />
+            </View>
+          ) : null}
+        </View>
 
-          <View style={sStyles.footerRow}>
-            <Text style={sStyles.footerText}>Already have an account?</Text>
-            <Link href="/(auth)/sign-in" style={sStyles.footerLink}>
-              Sign in
-            </Link>
-          </View>
-        </NCard>
+        {/* Password with eye */}
+        <View style={styles.fieldRow}>
+          <Text style={styles.fieldLabel}>Your Password</Text>
+          <View />
+        </View>
+        <View style={styles.inputLineWrap}>
+          <Ionicons
+            name="lock-closed-outline"
+            size={18}
+            color="#111827"
+            style={styles.leadingIcon}
+          />
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor="#9CA3AF"
+            secureTextEntry={!showPw}
+            value={password}
+            onChangeText={setPassword}
+            style={[styles.underlineInput, { paddingLeft: 36 }]}
+          />
+          <Pressable
+            onPress={() => setShowPw((s) => !s)}
+            style={styles.eyeChip}
+            hitSlop={10}
+          >
+            <Ionicons
+              name={showPw ? "eye-off-outline" : "eye-outline"}
+              size={18}
+              color="#111827"
+            />
+          </Pressable>
+        </View>
+
+        {/* Confirm password (UI only) */}
+        <View style={styles.fieldRow}>
+          <Text style={styles.fieldLabel}>Confirm Password</Text>
+          <View />
+        </View>
+        <View style={styles.inputLineWrap}>
+          <Ionicons
+            name="lock-closed-outline"
+            size={18}
+            color="#111827"
+            style={styles.leadingIcon}
+          />
+          <TextInput
+            placeholder="Re-enter password"
+            placeholderTextColor="#9CA3AF"
+            secureTextEntry
+            value={confirm}
+            onChangeText={setConfirm}
+            style={[styles.underlineInput, { paddingLeft: 36 }]}
+          />
+        </View>
+
+        {/* Forgot password (kept as UI only) */}
+        <Pressable onPress={() => {}} style={styles.forgotRow} hitSlop={8}>
+          <Text style={styles.forgot}>Forget Password?</Text>
+        </Pressable>
+
+        {/* Primary CTA */}
+        <NButton
+          title={loading ? "Creating..." : "Sign Up"}
+          fullWidth
+          onPress={onSignUpPress}
+          loading={loading}
+          style={styles.primaryCta}
+        />
+
+        {/* Social buttons */}
+        <View style={styles.socialRow}>
+          <TouchableOpacity
+            style={[styles.socialBtn]}
+            activeOpacity={0.9}
+            onPress={() => {}}
+          >
+            <Ionicons name="logo-google" size={18} color="#E94235" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.socialBtn]}
+            activeOpacity={0.9}
+            onPress={() => {}}
+          >
+            <Ionicons name="logo-facebook" size={18} color="#1877F2" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Switch auth */}
+        <View style={styles.switchRow}>
+          <Text style={styles.switchText}>Already have an account? </Text>
+          <Link href="/(auth)/sign-in" style={styles.switchLink}>
+            Sign In
+          </Link>
+        </View>
+
+        {/* Legal */}
+        <View style={styles.divider} />
+        <Text style={styles.legal}>
+          By continuing you agree Nutrizy’s{" "}
+          <Text style={styles.legalBold}>Terms of Services</Text> &{" "}
+          <Text style={styles.legalBold}>Privacy Policy</Text>
+        </Text>
       </View>
     </View>
   );
 }
 
-const INPUT_BG = "#F1F3F5";
-const ORANGE = "#FFB84D";
-const BLUE = "#2D7CE8";
+const GREEN = "#34C759";
 
-const baseBlob = {
-  position: "absolute" as const,
-  width: 240,
-  height: 240,
-  borderRadius: 120,
-  backgroundColor: "#D6E4FF",
-};
-
-const sStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#F6F8FF" },
-  container: {
-    flex: 1,
+
+  header: {
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xl,
-    justifyContent: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
-  bigTitle: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: BLUE,
-    alignSelf: "center",
-    marginVertical: spacing.lg,
-    letterSpacing: 0.5,
-  },
-  card: {
-    gap: spacing.md,
-    padding: spacing.xl,
-    borderRadius: 24,
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
     backgroundColor: "#FFFFFF",
-    borderWidth: 0,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    elevation: 6,
-  },
-  inputWrap: { position: "relative" },
-  input: {
-    backgroundColor: INPUT_BG,
-    borderColor: "transparent",
-    height: 52,
-    borderRadius: 16,
-    paddingLeft: 44,
-  },
-  inputPlain: {
-    backgroundColor: INPUT_BG,
-    borderColor: "transparent",
-    height: 52,
-    borderRadius: 16,
-  },
-  leadingIcon: { position: "absolute", left: 14, top: 16 },
-  trailingIconBtn: {
-    position: "absolute",
-    right: 14,
-    top: 14,
-    height: 24,
-    width: 24,
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+  },
+  brand: { fontWeight: "800", fontSize: 22, color: "#111827" },
+  brandAccent: { color: GREEN },
+
+  panel: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xl,
   },
 
-  primaryCta: {
-    backgroundColor: ORANGE,
-    borderRadius: 999,
-    paddingVertical: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 4,
-    marginTop: spacing.sm,
+  subtitle: { color: "#6B7280", fontSize: 16, marginBottom: 6 },
+  title: {
+    color: "#111827",
+    fontSize: 28,
+    fontWeight: "800",
+    marginBottom: spacing.lg,
   },
-  footerRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 6,
-    marginTop: spacing.sm,
-  },
-  footerText: { color: "#6B7280" },
-  footerLink: { color: BLUE, fontWeight: "700" },
+
   errorText: {
     color: "#B91C1C",
     backgroundColor: "#FEE2E2",
@@ -302,15 +340,165 @@ const sStyles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     borderRadius: 10,
+    marginBottom: spacing.md,
   },
-  blob: baseBlob as any,
-  blobTopRight: { top: -60, right: -60, transform: [{ scaleX: 1.2 }] },
-  blobBottomLeft: {
-    bottom: -60,
-    left: -60,
-    backgroundColor: "#BFD3FF",
-    transform: [{ scale: 1.1 }],
+
+  fieldRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: spacing.md,
   },
+  fieldLabel: { color: "#6B7280", fontWeight: "700" },
+  trailingSpace: { width: 28 },
+
+  inputLineWrap: {
+    position: "relative",
+    marginTop: 4,
+    marginBottom: 2,
+    minHeight: 44,
+    justifyContent: "center",
+  },
+  leadingIcon: { position: "absolute", left: 4, top: 12 },
+  underlineInput: {
+    height: 44,
+    borderBottomWidth: 2,
+    borderBottomColor: "#E5E7EB",
+    color: "#111827",
+    fontSize: 16,
+    paddingRight: 44,
+  },
+  successBadge: {
+    position: "absolute",
+    right: 4,
+    top: 8,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: GREEN,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  eyeChip: {
+    position: "absolute",
+    right: 4,
+    top: 8,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#F1F5F9",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+  },
+
+  forgotRow: { alignSelf: "flex-end", marginTop: 8 },
+  forgot: { color: "#111827", fontWeight: "700" },
+
+  primaryCta: {
+    backgroundColor: GREEN,
+    borderRadius: 999,
+    paddingVertical: 16,
+    marginTop: spacing.lg,
+  },
+
+  socialRow: {
+    marginTop: spacing.lg,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing.md,
+  },
+  socialBtn: {
+    flex: 1,
+    height: 52,
+    borderRadius: 999,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  switchRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: spacing.lg,
+  },
+  switchText: { color: "#6B7280" },
+  switchLink: { color: "#111827", fontWeight: "800" },
+
+  divider: { height: 1, backgroundColor: "#E5E7EB", marginTop: spacing.lg },
+  legal: {
+    color: "#6B7280",
+    textAlign: "center",
+    marginTop: spacing.md,
+  },
+  legalBold: { color: "#111827", fontWeight: "800" },
+  footerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: spacing.md,
+  },
+  footerText: { color: "#6B7280", marginRight: 4 },
+  footerLink: { color: "#111827", fontWeight: "800" },
 });
 
-const vStyles = sStyles;
+const vStyles = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: "#F6F8FF" },
+  header: {
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.xl,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+  },
+  brand: { fontWeight: "800", fontSize: 22, color: "#111827" },
+  brandAccent: { color: GREEN },
+
+  panel: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xl,
+  },
+
+  subtitle: { color: "#6B7280", fontSize: 16, marginBottom: 6 },
+  title: {
+    color: "#111827",
+    fontSize: 24,
+    fontWeight: "800",
+    marginBottom: spacing.lg,
+  },
+
+  underlineInput: {
+    height: 48,
+    borderBottomWidth: 2,
+    borderBottomColor: "#E5E7EB",
+    color: "#111827",
+    fontSize: 18,
+  },
+
+  primaryCta: {
+    backgroundColor: GREEN,
+    borderRadius: 999,
+    paddingVertical: 16,
+    marginTop: spacing.lg,
+  },
+});

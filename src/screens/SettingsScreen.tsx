@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Switch,
   Text,
+  ToastAndroid,
   View,
 } from "react-native";
 import { useRouter } from "expo-router";
@@ -20,6 +21,7 @@ import {
 } from "../../appwriteConfig";
 import { Query } from "react-native-appwrite";
 import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SettingsScreen() {
   const { user } = useUser();
@@ -32,6 +34,7 @@ export default function SettingsScreen() {
   const [userName, setUserName] = useState({
     age: "",
     fullName: "",
+    gender: "",
   });
   useEffect(() => {
     async function run() {
@@ -49,6 +52,7 @@ export default function SettingsScreen() {
           setUserName({
             age: userDoc.age,
             fullName,
+            gender: userDoc.gender,
           });
         }
       } catch (err) {
@@ -74,6 +78,7 @@ export default function SettingsScreen() {
           value={user?.primaryEmailAddress?.emailAddress ?? "—"}
         />
         <Row label="Age" value={userName.age ?? "—"} />
+        <Row label="Gender" value={userName.gender ?? "—"} />
       </NCard>
 
       <NCard style={styles.card}>
@@ -117,6 +122,20 @@ export default function SettingsScreen() {
             } catch (e) {
               console.log(e);
               Alert.alert("Sign out failed", "Please try again.");
+            }
+          }}
+        />
+        <NButton
+          title="Clear cache"
+          variant="danger"
+          fullWidth
+          onPress={async () => {
+            try {
+              await AsyncStorage.clear();
+              ToastAndroid.show("Cache cleared", ToastAndroid.SHORT);
+            } catch (e) {
+              console.log(e);
+              Alert.alert("Cannot clear cache", "Please try again.");
             }
           }}
         />

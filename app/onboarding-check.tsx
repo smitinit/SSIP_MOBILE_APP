@@ -45,6 +45,7 @@ export default function OnboardingCheck() {
               lastName: user.lastName || "",
               age: 0,
               onboardingComplete: false,
+              gender: null,
             }
           );
         }

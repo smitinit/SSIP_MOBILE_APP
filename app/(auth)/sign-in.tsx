@@ -1,12 +1,20 @@
+"use client";
+
 import React from "react";
-import { View, StyleSheet, Text, Pressable } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Pressable,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { useSignIn } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
-import { NInput } from "@/ui/input";
 import { NButton } from "@/ui/button";
-import { NCard } from "@/ui/card";
 import { spacing } from "@/design/tokens";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function getClerkErrorMessage(err: unknown) {
   const e = err as any;
@@ -49,192 +57,192 @@ export default function SignInScreen() {
       console.error("Sign-in error:", JSON.stringify(err, null, 2));
     } finally {
       setLoading(false);
+      await AsyncStorage.setItem("onboardingComplete", "true");
     }
   };
 
+  const isEmailValid = /\S+@\S+\.\S+/.test(emailAddress.trim());
+
   return (
     <View style={styles.screen}>
-      {/* Background decorative blobs */}
-      <View style={[styles.blob, styles.blobTopRight]} />
-      <View style={[styles.blob, styles.blobBottomLeft]} />
+      {/* Header with back + brand */}
+      <View style={styles.header}>
+        <Pressable
+          onPress={() => router.back()}
+          hitSlop={10}
+          style={styles.backBtn}
+        >
+          <Ionicons name="chevron-back" size={22} color="#111827" />
+        </Pressable>
+        <Text style={styles.brand}>
+          {"Nutr"}
+          <Text style={styles.brandAccent}>{"izy"}</Text>
+        </Text>
+        <View style={{ width: 36 }} />
+      </View>
 
-      <View style={styles.container}>
-        <Text style={styles.bigTitle}>LOGIN</Text>
+      {/* Rounded white panel */}
+      <View style={styles.panel}>
+        <Text style={styles.subtitle}>{"Let’s Sign you In"}</Text>
+        <Text style={styles.title}>{"You have been Missed!"}</Text>
 
-        <NCard style={styles.card}>
-          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-          {/* Email */}
-          <View style={styles.inputWrap}>
-            <Ionicons
-              name="mail-outline"
-              size={18}
-              color="#111827"
-              style={styles.leadingIcon}
-            />
-            <NInput
-              placeholder="Email"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              value={emailAddress}
-              onChangeText={setEmailAddress}
-              style={styles.input}
-            />
-          </View>
-
-          {/* Password with eye toggle */}
-          <View style={styles.inputWrap}>
-            <Ionicons
-              name="lock-closed-outline"
-              size={18}
-              color="#111827"
-              style={styles.leadingIcon}
-            />
-            <NInput
-              placeholder="Password"
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={setPassword}
-              style={styles.input}
-            />
-            <Pressable
-              onPress={() => setShowPassword((s) => !s)}
-              style={styles.trailingIconBtn}
-              hitSlop={10}
-            >
-              <Ionicons
-                name={showPassword ? "eye-off-outline" : "eye-outline"}
-                size={20}
-                color="#111827"
-              />
-            </Pressable>
-          </View>
-
-          {/* Primary CTA */}
-          <NButton
-            title={loading ? "Signing in..." : "LOGIN"}
-            fullWidth
-            onPress={onSignInPress}
-            loading={loading}
-            style={styles.primaryCta}
+        {/* Email with underline and check */}
+        <View style={styles.fieldRow}>
+          <Text style={styles.fieldLabel}>Your Email </Text>
+          <View style={styles.trailingSpace} />
+        </View>
+        <View style={styles.inputLineWrap}>
+          <Ionicons
+            name="mail-outline"
+            size={18}
+            color="#111827"
+            style={styles.leadingIcon}
           />
+          <TextInput
+            placeholder="Email"
+            placeholderTextColor="#9CA3AF"
+            autoCapitalize="none"
+            keyboardType="email-address"
+            value={emailAddress}
+            onChangeText={setEmailAddress}
+            style={[styles.underlineInput, { paddingLeft: 36 }]}
+          />
+          {isEmailValid ? (
+            <View style={styles.successBadge}>
+              <Ionicons name="checkmark" size={16} color="#fff" />
+            </View>
+          ) : null}
+        </View>
 
-          {/* Google button (UI only) */}
-          {/* <TouchableOpacity
-            style={styles.googleBtn}
+        {/* Password with eye */}
+        <View style={styles.fieldRow}>
+          <Text style={styles.fieldLabel}>Your Password</Text>
+          <View />
+        </View>
+        <View style={styles.inputLineWrap}>
+          <Ionicons
+            name="lock-closed-outline"
+            size={18}
+            color="#111827"
+            style={styles.leadingIcon}
+          />
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor="#9CA3AF"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={setPassword}
+            style={[styles.underlineInput, { paddingLeft: 36 }]}
+          />
+          <Pressable
+            onPress={() => setShowPassword((s) => !s)}
+            style={styles.eyeChip}
+            hitSlop={10}
+          >
+            <Ionicons
+              name={showPassword ? "eye-off-outline" : "eye-outline"}
+              size={18}
+              color="#111827"
+            />
+          </Pressable>
+        </View>
+
+        {/* Forgot password (UI only) */}
+        <Pressable onPress={() => {}} style={styles.forgotRow} hitSlop={8}>
+          <Text style={styles.forgot}>Forget Password?</Text>
+        </Pressable>
+
+        {/* Primary CTA */}
+        <NButton
+          title={loading ? "Signing in..." : "Sign In"}
+          fullWidth
+          onPress={onSignInPress}
+          loading={loading}
+          style={styles.primaryCta}
+        />
+
+        {/* Social buttons (outlined) */}
+        <View style={styles.socialRow}>
+          <TouchableOpacity
+            style={[styles.socialBtn]}
             activeOpacity={0.9}
             onPress={() => {}}
           >
-            <Ionicons
-              name="logo-google"
-              size={16}
-              color="#111827"
-              style={{ marginRight: 10 }}
-            />
-            <Text style={styles.googleText}>Sign in with Google</Text>
-          </TouchableOpacity> */}
+            <Ionicons name="logo-google" size={18} color="#E94235" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.socialBtn]}
+            activeOpacity={0.9}
+            onPress={() => {}}
+          >
+            <Ionicons name="logo-facebook" size={18} color="#1877F2" />
+          </TouchableOpacity>
+        </View>
 
-          {/* Footer link */}
-          <View style={styles.footerRow}>
-            <Text style={styles.footerText}>Not registered yet?</Text>
-            <Link href="/(auth)/sign-up" style={styles.footerLink}>
-              Create an Account
-            </Link>
-          </View>
-        </NCard>
+        {/* Switch auth */}
+        <View style={styles.switchRow}>
+          <Text style={styles.switchText}>Don’t have a Account? </Text>
+          <Link href="/(auth)/sign-up" style={styles.switchLink}>
+            Sign Up
+          </Link>
+        </View>
+
+        {/* Legal */}
+        <View style={styles.divider} />
+        <Text style={styles.legal}>
+          By continuing you agree Nutrizy’s{" "}
+          <Text style={styles.legalBold}>Terms of Services</Text> &{" "}
+          <Text style={styles.legalBold}>Privacy Policy</Text>
+        </Text>
       </View>
     </View>
   );
 }
 
-const INPUT_BG = "#F1F3F5";
-const ORANGE = "#FFB84D"; // CTA color from mock
-const BLUE = "#2D7CE8";
+const GREEN = "#34C759";
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#F6F8FF" },
-  container: {
-    flex: 1,
+
+  header: {
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xl,
-    justifyContent: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
-  bigTitle: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: BLUE,
-    alignSelf: "center",
-    marginVertical: spacing.lg,
-    letterSpacing: 0.5,
-  },
-  card: {
-    gap: spacing.md,
-    padding: spacing.xl,
-    borderRadius: 24,
-    // backgroundColor: "transparent",
-    borderWidth: 0,
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 6 },
-    // shadowOpacity: 0.06,
-    // shadowRadius: 12,
-    // elevation: 6,
-  },
-  inputWrap: { position: "relative" },
-  input: {
-    backgroundColor: INPUT_BG,
-    borderColor: "transparent",
-    height: 52,
-    borderRadius: 16,
-    paddingLeft: 44, // space for icon
-  },
-  leadingIcon: { position: "absolute", left: 14, top: 16 },
-  trailingIconBtn: {
-    position: "absolute",
-    right: 14,
-    top: 14,
-    height: 24,
-    width: 24,
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
-  },
-
-  primaryCta: {
-    backgroundColor: ORANGE,
-    borderRadius: 999,
-    paddingVertical: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 4,
-    marginTop: spacing.sm,
-  },
-
-  googleBtn: {
-    height: 52,
-    borderRadius: 16,
-    backgroundColor: "#FFFFFF",
     borderWidth: 1,
     borderColor: "#E5E7EB",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
   },
-  googleText: { color: "#111827", fontWeight: "600" },
+  brand: { fontWeight: "800", fontSize: 22, color: "#111827" },
+  brandAccent: { color: GREEN },
 
-  footerRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 6,
-    marginTop: spacing.sm,
+  panel: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xl,
   },
-  footerText: { color: "#6B7280" },
-  footerLink: { color: BLUE, fontWeight: "700" },
+
+  subtitle: { color: "#6B7280", fontSize: 16, marginBottom: 6 },
+  title: {
+    color: "#111827",
+    fontSize: 28,
+    fontWeight: "800",
+    marginBottom: spacing.lg,
+  },
 
   errorText: {
     color: "#B91C1C",
@@ -243,21 +251,102 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     borderRadius: 10,
+    marginBottom: spacing.md,
   },
 
-  // decorative blobs
-  blob: {
+  fieldRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: spacing.md,
+  },
+  fieldLabel: { color: "#6B7280", fontWeight: "700" },
+  trailingSpace: { width: 28 },
+
+  inputLineWrap: {
+    position: "relative",
+    marginTop: 4,
+    marginBottom: 2,
+    minHeight: 44,
+    justifyContent: "center",
+  },
+  leadingIcon: { position: "absolute", left: 4, top: 12 },
+
+  underlineInput: {
+    height: 44,
+    borderBottomWidth: 2,
+    borderBottomColor: "#E5E7EB",
+    color: "#111827",
+    fontSize: 16,
+    paddingRight: 44,
+  },
+  successBadge: {
     position: "absolute",
-    width: 240,
-    height: 240,
-    borderRadius: 120,
-    backgroundColor: "#D6E4FF",
+    right: 4,
+    top: 8,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: GREEN,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  blobTopRight: { top: -60, right: -60, transform: [{ scaleX: 1.2 }] },
-  blobBottomLeft: {
-    bottom: -60,
-    left: -60,
-    backgroundColor: "#BFD3FF",
-    transform: [{ scale: 1.1 }],
+  eyeChip: {
+    position: "absolute",
+    right: 4,
+    top: 8,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#F1F5F9",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
   },
+
+  forgotRow: { alignSelf: "flex-end", marginTop: 8 },
+  forgot: { color: "#111827", fontWeight: "700" },
+
+  primaryCta: {
+    backgroundColor: GREEN,
+    borderRadius: 999,
+    paddingVertical: 16,
+    marginTop: spacing.lg,
+  },
+
+  socialRow: {
+    marginTop: spacing.lg,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing.md,
+  },
+  socialBtn: {
+    flex: 1,
+    height: 52,
+    borderRadius: 999,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  switchRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: spacing.lg,
+  },
+  switchText: { color: "#6B7280" },
+  switchLink: { color: "#111827", fontWeight: "800" },
+
+  divider: { height: 1, backgroundColor: "#E5E7EB", marginTop: spacing.lg },
+  legal: {
+    color: "#6B7280",
+    textAlign: "center",
+    marginTop: spacing.md,
+  },
+  legalBold: { color: "#111827", fontWeight: "800" },
 });

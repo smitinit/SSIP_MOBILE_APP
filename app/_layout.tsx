@@ -1,9 +1,11 @@
 import { useFonts } from "expo-font";
 import "react-native-reanimated";
-
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
-import { Slot } from "expo-router";
+import { Slot, Stack } from "expo-router";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet } from "react-native";
+import { palette } from "@/design/tokens";
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -15,8 +17,20 @@ export default function RootLayout() {
   }
 
   return (
-    <ClerkProvider tokenCache={tokenCache}>
-      <Slot />
-    </ClerkProvider>
+    <SafeAreaProvider>
+      <ClerkProvider tokenCache={tokenCache}>
+        <SafeAreaView style={styles.container} edges={["top"]}>
+          <Slot />
+        </SafeAreaView>
+      </ClerkProvider>
+    </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: palette.bg, // match your theme
+    paddingTop: 8, // extra breathing room on top
+  },
+});
