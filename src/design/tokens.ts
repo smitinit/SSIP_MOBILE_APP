@@ -28,6 +28,7 @@ export const spacing = {
   md: 14,
   lg: 20,
   xl: 28,
+  xxl: 36,
 };
 
 export const shadow = Platform.select({

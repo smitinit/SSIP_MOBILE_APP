@@ -7,7 +7,7 @@ export default function Onboarding1() {
       headline="Get customized weight loss and health diets."
       body=""
       index={0}
-      total={4}
+      total={3}
       nextHref="/(intro)/onb-2"
       skipHref="/(auth)/sign-up"
     />
