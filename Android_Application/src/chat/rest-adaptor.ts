@@ -1,10 +1,10 @@
-import type { ChatAdapter, ChatMessage } from "./types"
+import type { ChatAdapter, chatReply, ChatMessage } from "./types"
 import { BACKEND_URL } from "./config"
 
 export class RestAdapter implements ChatAdapter {
   constructor(private baseUrl: string = BACKEND_URL) {}
 
-  async send(messages: ChatMessage[]): Promise<string> {
+  async send(messages: ChatMessage[]): Promise<chatReply> {
     const res = await fetch(`${this.baseUrl}/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -12,11 +12,11 @@ export class RestAdapter implements ChatAdapter {
     })
 
     if (!res.ok) {
-      const text = await res.text().catch(() => "")
-      throw new Error(text || "Chat API error")
+      throw new Error(res.statusText)
     }
-
-    const data = (await res.json()) as { reply?: string }
-    return data?.reply ?? ""
+    const data = (await res.json())
+    console.log("data-reply", data?.reply);
+    
+    return data?.reply as chatReply ?? ""
   }
 }
