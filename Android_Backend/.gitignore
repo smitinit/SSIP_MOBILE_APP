@@ -1,2 +1,4 @@
 Android_Backend/node_modules/
 Android_Backend/.env
+.env*
+node_modules
