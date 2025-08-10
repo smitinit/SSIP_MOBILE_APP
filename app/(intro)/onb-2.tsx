@@ -6,7 +6,7 @@ export default function Onboarding2() {
       image={require("../../assets/images/favicon.jpeg")}
       headline="Simple steps to a healthier, newer you."
       index={1}
-      total={4}
+      total={3}
       nextHref="/(intro)/onb-3"
       skipHref="/(auth)/sign-up"
     />

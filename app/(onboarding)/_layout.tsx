@@ -6,8 +6,8 @@ export default function OnboardingLayout() {
   const { isSignedIn } = useAuth();
   if (!isSignedIn) return <Redirect href="/(auth)/sign-in" />;
   return (
-    <Stack>
-      <Stack.Screen name="user-details" options={{ headerShown: false }} />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="user-details" />
     </Stack>
   );
 }

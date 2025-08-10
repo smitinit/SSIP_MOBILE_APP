@@ -9,7 +9,7 @@ export default function SplashScreen() {
   useEffect(() => {
     const t = setTimeout(() => {
       router.replace("/(intro)/onb-1");
-    }, 1200);
+    }, 4200);
     return () => clearTimeout(t);
   }, [router]);
 

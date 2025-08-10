@@ -51,7 +51,7 @@ export default function OnboardingCheck() {
         }
 
         if (userDoc.onboardingComplete) {
-          router.replace("/(tabs)/home");
+          router.replace("/(onboarding)/(dialy-questions)/q-1");
         } else {
           router.replace("/(onboarding)/user-details");
         }
@@ -61,6 +61,7 @@ export default function OnboardingCheck() {
     }
 
     run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, user]);
 
   return (

@@ -18,9 +18,10 @@ export default function AppIndex() {
     })();
   }, [router]);
   if (loading) return null;
+
   if (hasOnboarded) {
     return <WelcomeScreen />;
   } else {
-    return router.replace("/(intro)/splash");
+    return router.replace("/(intro)/onb-1");
   }
 }
