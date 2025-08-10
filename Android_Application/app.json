@@ -11,14 +11,15 @@
     "ios": {
       "supportsTablet": true
     },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/favicon.jpeg",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.LifeTNative"
+   "android": {
+    "adaptiveIcon": {
+      "foregroundImage": "./assets/images/favicon.jpeg",
+      "backgroundColor": "#ffffff"
     },
+    "edgeToEdgeEnabled": true,
+    "package": "com.anonymous.LifeTNative",
+    "softwareKeyboardLayoutMode": "resize"
+  },
     "web": {
       "bundler": "metro",
       "output": "static",
