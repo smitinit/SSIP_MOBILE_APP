@@ -37,7 +37,7 @@ export default function Step4() {
 
   const handleNext = () => {
     if (!validate()) return;
-    router.push("/(onboarding)/(dialy-questions)/choose-plan");
+    router.push("/(onboarding)/(daily-questions)/choose-plan");
   };
 
   return (

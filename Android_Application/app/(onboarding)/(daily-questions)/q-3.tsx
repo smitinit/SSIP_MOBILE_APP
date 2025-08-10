@@ -40,7 +40,7 @@ export default function Step3() {
       heightCm: height.trim(),
     }));
     setStep(4);
-    router.push("/(onboarding)/(dialy-questions)/q-4");
+    router.push("/(onboarding)/(daily-questions)/q-4");
   };
 
   return (

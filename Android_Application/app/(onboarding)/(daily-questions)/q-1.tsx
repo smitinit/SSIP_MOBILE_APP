@@ -21,7 +21,7 @@ export default function Step1() {
     setError("");
     setAnswers((s) => ({ ...s, waterLiters: value.trim() }));
     setStep(2);
-    router.push("/(onboarding)/(dialy-questions)/q-2");
+    router.push("/(onboarding)/(daily-questions)/q-2");
   };
   return (
     <View style={styles.root}>

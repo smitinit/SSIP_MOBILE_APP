@@ -9,12 +9,15 @@ import {
 } from "../appwriteConfig";
 import { ID, Query } from "react-native-appwrite";
 import { palette } from "@/design/tokens";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function OnboardingCheck() {
   const router = useRouter();
   const { isLoaded, user } = useUser();
 
   useEffect(() => {
+    let isActive = true; // Prevent running after unmount
+
     async function run() {
       if (!isLoaded) return;
       if (!user) {
@@ -23,7 +26,6 @@ export default function OnboardingCheck() {
       }
 
       try {
-        // Try fetching existing doc
         const res = await databases.listDocuments(
           DB_ID,
           USERS_DETAILS_COLLECTION_ID,
@@ -32,7 +34,6 @@ export default function OnboardingCheck() {
 
         let userDoc = res.documents[0];
 
-        // Create doc if doesn't exist
         if (!userDoc) {
           userDoc = await databases.createDocument(
             DB_ID,
@@ -50,10 +51,37 @@ export default function OnboardingCheck() {
           );
         }
 
-        if (userDoc.onboardingComplete) {
-          router.replace("/(onboarding)/(dialy-questions)/q-1");
-        } else {
+        if (!isActive) return; // stop if unmounted
+
+        if (!userDoc.onboardingComplete) {
           router.replace("/(onboarding)/user-details");
+          return;
+        }
+
+        const storedTime = await AsyncStorage.getItem(
+          "dailyQuestionsOnboardingTime"
+        );
+
+        if (storedTime) {
+          const storedDate = new Date(storedTime);
+          if (isNaN(storedDate.getTime())) {
+            // If invalid date, treat as needing daily questions
+            router.replace("/(onboarding)/(daily-questions)/q-1");
+            return;
+          }
+          const hoursDiff =
+            (Date.now() - storedDate.getTime()) / (1000 * 60 * 60);
+
+          if (hoursDiff > 24) {
+            console.log("daily question => didnot hit");
+            router.replace("/(onboarding)/(daily-questions)/q-1");
+          } else {
+            console.log("daily question => hit");
+            router.replace("/(tabs)/home");
+          }
+        } else {
+          console.log("daily question => time doesnot exist Error case");
+          router.replace("/(onboarding)/(daily-questions)/q-1");
         }
       } catch (err) {
         console.error("Error checking onboarding:", err);
@@ -61,8 +89,11 @@ export default function OnboardingCheck() {
     }
 
     run();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, user]);
+
+    return () => {
+      isActive = false; // cleanup on unmount
+    };
+  }, [isLoaded, user, router]);
 
   return (
     <View

@@ -22,7 +22,7 @@ export default function Step2() {
     setError("");
     setAnswers((s) => ({ ...s, favoriteFood: value.trim() }));
     setStep(3);
-    router.push("/(onboarding)/(dialy-questions)/q-3");
+    router.push("/(onboarding)/(daily-questions)/q-3");
   };
 
   return (

@@ -10,26 +10,29 @@ import { useRouter } from "expo-router";
 
 import { spacing } from "@/design/tokens";
 import { useWizard } from "../../context/onboarding-questions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ChoosePlan() {
   const router = useRouter();
   const { answers, setPlan, setDuration, questionsAndAnswers } = useWizard();
 
-  const onFinish = () => {
+  const onFinish = async () => {
     // Hand off the answers array here
     console.log("questionsAndAnswers:", questionsAndAnswers);
-    Alert.alert(
-      "Collected Answers",
-      JSON.stringify(questionsAndAnswers, null, 2)
+    // Alert.alert(
+    //   "Collected Answers",
+    //   JSON.stringify(questionsAndAnswers, null, 2)
+    // );
+    await AsyncStorage.setItem(
+      "dailyQuestionsOnboardingTime",
+      new Date().toISOString()
     );
+
     router.replace("/(tabs)/home");
   };
 
   return (
     <ScrollView contentContainerStyle={styles.root}>
-      <Text style={styles.header}>Choose Plan</Text>
-      <Text style={styles.sub}>Unlock all features with Premium Plan</Text>
-
       {/* Tiers */}
       <Pressable
         onPress={() => setPlan("gold")}
