@@ -40,10 +40,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="dashboard"
         options={{
-          title: "Analytics",
+          title: "Medi_Chat",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "view-dashboard" : "view-dashboard-outline"}
+              name={focused ? "chat" : "chat-outline"}
               color={color}
             />
           ),

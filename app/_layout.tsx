@@ -30,7 +30,7 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: palette.bg, // match your theme
+    backgroundColor: palette.danger, // match your theme
     paddingTop: 8, // extra breathing room on top
   },
 });
