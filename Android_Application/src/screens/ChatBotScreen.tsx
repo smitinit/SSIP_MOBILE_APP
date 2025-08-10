@@ -479,7 +479,7 @@ export default function ChatBotScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.select({
         ios: insets.top + 8,
-        android: insets.bottom + 10,
+        android: insets.bottom + 30,
         default: 0,
       })}
     >
@@ -690,7 +690,8 @@ const styles = StyleSheet.create({
   composerInner: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "",
+
     borderRadius: 28,
     borderWidth: 1,
     borderColor: "#E2E8F0",
