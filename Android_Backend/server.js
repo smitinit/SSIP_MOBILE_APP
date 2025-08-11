@@ -204,7 +204,7 @@ app.post("/chat", async (req, res) => {
       String(lastUserMessage.response || "").trim()
     );
 
-    console.log("result:", result.response);
+    // console.log("result:", result.response);
 
     const replyText = await result.response.text();
     console.log("Raw AI reply:", replyText);
