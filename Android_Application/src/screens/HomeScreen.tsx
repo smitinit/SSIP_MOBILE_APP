@@ -1,4 +1,11 @@
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { palette, spacing, typography } from "@/design/tokens";
 import { NCard } from "@/ui/card";
 import { NProgress } from "@/ui/progress";
@@ -49,6 +56,7 @@ export default function HomeScreen() {
   return (
     <ScrollView contentContainerStyle={styles.root}>
       {/* Greeting */}
+      <Pressable>hello dumb fuck</Pressable>
       <Text style={styles.greet}>
         {`Hey, ${userName.fullName.split(" ")[0]} 👋`}
       </Text>
