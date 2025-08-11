@@ -63,6 +63,9 @@ export default function HomeScreen() {
       <Pressable onPress={() => router.push("/(core)/(symptoscan)/SymptoScan")}>
         <Text style={styles.symptoscan}>{"SymptoScan"}</Text>
       </Pressable>
+      <Pressable onPress={() => router.push("/(core)/(caltrack)/Caltrack")}>
+        <Text style={styles.symptoscan}>{"Caltrack"}</Text>
+      </Pressable>
       <Text style={styles.headline}>{"Personalize your Consultation"}</Text>
 
       {/* Tabs selector */}
