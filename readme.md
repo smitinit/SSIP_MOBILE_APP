@@ -62,8 +62,8 @@ It combines conversational AI, smart symptom scanning, and daily health check-in
 - **Frontend**: React Native (Mobile App)
 - **Backend**: Node.js + Express
 - **AI Engine**: Google Gemini API
-- **Database**: (e.g., MongoDB / Firebase — specify your choice)
-- **Auth**: JWT-based authentication
+- **Database**: Apprwrite 
+- **Auth**: clerk Authencation
 - **Report Generation**: PDF downloads with health insights
 
 ---
@@ -87,4 +87,5 @@ PORT=5000
 
 # Start the backend server
 nodemon server.js
+
 
