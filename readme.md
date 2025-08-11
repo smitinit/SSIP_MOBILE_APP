@@ -72,15 +72,19 @@ It combines conversational AI, smart symptom scanning, and daily health check-in
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/healthvitals-ai.git
-cd healthvitals-ai
+git clone https://github.com/yourusername/SSIP_MOBILE_APP.git
+cd Android_Application
 
 # Install dependencies
 npm install
 
+# Backend
+cd Android_Backend
+npm i
 # Create a .env file in the root and add:
 GOOGLE_API_KEY=your_google_api_key
 PORT=5000
 
 # Start the backend server
-npm run dev
+nodemon server.js
+
