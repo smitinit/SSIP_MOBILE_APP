@@ -20,6 +20,7 @@ import {
   DB_ID,
 } from "../../appwriteConfig";
 import { Query } from "react-native-appwrite";
+import { router } from "expo-router";
 
 export default function HomeScreen() {
   const { user } = useUser();
@@ -56,10 +57,12 @@ export default function HomeScreen() {
   return (
     <ScrollView contentContainerStyle={styles.root}>
       {/* Greeting */}
-      <Pressable>hello dumb fuck</Pressable>
       <Text style={styles.greet}>
         {`Hey, ${userName.fullName.split(" ")[0]} 👋`}
       </Text>
+      <Pressable onPress={() => router.push("/(core)/(symptoscan)/SymptoScan")}>
+        <Text style={styles.symptoscan}>{"SymptoScan"}</Text>
+      </Pressable>
       <Text style={styles.headline}>{"Personalize your Consultation"}</Text>
 
       {/* Tabs selector */}
@@ -131,6 +134,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  symptoscan: {
+    marginTop: spacing.lg,
+    color: palette.primary,
+    fontSize: 16,
+    fontWeight: "800",
+  },
   topTitle: { fontWeight: "700", fontSize: 18, color: palette.text },
   topActions: { flexDirection: "row", gap: 10, alignItems: "center" },
   circle: {
@@ -143,6 +152,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#fff",
   },
+  greet: {
+    marginTop: spacing.lg,
+    color: palette.textMuted,
+    fontSize: 16,
+  },
   circleSolid: {
     width: 36,
     height: 36,
@@ -152,7 +166,6 @@ const styles = StyleSheet.create({
     backgroundColor: palette.primary,
   },
   avatar: { width: 36, height: 36, borderRadius: 18 },
-  greet: { marginTop: spacing.lg, color: palette.textMuted, fontSize: 16 },
   headline: { marginTop: 4, fontSize: 26, fontWeight: "800", color: "#2E1065" }, // deep purple headline
   appointment: {
     gap: spacing.md,
