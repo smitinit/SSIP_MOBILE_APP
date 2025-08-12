@@ -47,7 +47,12 @@ const SymptoScan = () => {
       <StatusBar
         barStyle={Platform.OS === "android" ? "light-content" : "dark-content"}
       />
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.container,
+          { flex: 1, justifyContent: "center" },
+        ]}
+      >
         <MotiView
           from={{ opacity: 0, translateY: 12, scale: 0.98 }}
           animate={{ opacity: 1, translateY: 0, scale: 1 }}
