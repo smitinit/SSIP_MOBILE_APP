@@ -225,19 +225,19 @@ export default function SymptoScan() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, paddingTop: 24, backgroundColor: "#F5F7FB" },
+  container: { padding: 16, paddingTop: 10, backgroundColor: "transparent" },
   card: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 20,
+    borderRadius: 0,
     paddingVertical: 20,
     paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 3,
+    // borderWidth: 0,
+    // borderColor: "#E5E7EB",
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 6 },
+    // shadowOpacity: 0.08,
+    // shadowRadius: 12,
+    // elevation: 3,
   },
   title: { fontSize: 24, fontWeight: "800", color: "#0F172A" },
   lead: { marginTop: 6, color: "#6B7280", fontSize: 14.5, lineHeight: 20 },

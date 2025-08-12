@@ -35,6 +35,7 @@ export type Lifestyle = {
 };
 
 type SymptomContextValue = {
+  resetAll: () => void;
   // Static catalog
   bodyAreas: BodyArea[];
   medicalConditions: string[];
@@ -154,6 +155,12 @@ export function SymptomProvider({ children }: { children: ReactNode }) {
   ) => {
     setLifestyle((prev) => ({ ...prev, [key]: value }));
   };
+  const resetAll = () => {
+    setCurrentAreaId(null);
+    setSelectedSymptoms([]);
+    setDemographics(DEFAULT_DEMOGRAPHICS);
+    setLifestyle(DEFAULT_LIFESTYLE);
+  };
 
   const value: SymptomContextValue = useMemo(
     () => ({
@@ -175,6 +182,8 @@ export function SymptomProvider({ children }: { children: ReactNode }) {
 
       lifestyle,
       updateLifestyle,
+
+      resetAll,
     }),
     [currentAreaId, selectedSymptoms, demographics, lifestyle]
   );
