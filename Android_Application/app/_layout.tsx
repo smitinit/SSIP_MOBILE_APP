@@ -1,11 +1,11 @@
 import { useFonts } from "expo-font";
 import "react-native-reanimated";
 import { ClerkProvider } from "@clerk/clerk-expo";
-import { tokenCache } from "@clerk/clerk-expo/token-cache";
-import { Slot, Stack } from "expo-router";
+import { Slot } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
 import { palette } from "@/design/tokens";
+import * as SecureStore from "expo-secure-store";
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -15,6 +15,24 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
+  const tokenCache = {
+    async getToken(key: string) {
+      try {
+        return SecureStore.getItemAsync(key);
+      } catch (err) {
+        console.log(err);
+        return null;
+      }
+    },
+    async saveToken(key: string, value: string) {
+      try {
+        return SecureStore.setItemAsync(key, value);
+      } catch (err) {
+        console.log(err);
+        return;
+      }
+    },
+  };
 
   return (
     <SafeAreaProvider>

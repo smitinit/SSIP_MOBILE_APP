@@ -42,6 +42,7 @@
     "react-native-appwrite": "^0.11.0",
     "react-native-async-storage": "^0.0.1",
     "react-native-gesture-handler": "~2.24.0",
+    "react-native-loading-spinner-overlay": "^3.0.1",
     "react-native-portalize": "^1.0.7",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "^5.4.0",

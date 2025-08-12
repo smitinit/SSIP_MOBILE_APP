@@ -206,7 +206,7 @@ export default function Lifestyle() {
             onPress={() => {
               // Navigate to your Step 4 analysis/results screen
               // Example:
-              // router.push("/(core)/(symptoscan)/Analyze")
+              router.push("/(core)/(symptoscan)/SymptoScan");
             }}
             style={({ pressed }) => [
               styles.btnPrimary,

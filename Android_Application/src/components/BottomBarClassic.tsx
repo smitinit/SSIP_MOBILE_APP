@@ -100,7 +100,7 @@ export default function BottomBarClassic({
 
         {/* Center "+" button */}
         <Pressable
-          onPress={handleOpen}
+          // onPress={handleOpen}
           style={({ pressed }) => [
             styles.centerBtn,
             pressed &&

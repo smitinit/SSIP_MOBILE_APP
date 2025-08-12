@@ -3,6 +3,7 @@ import { TabBarIcon } from "@/components/TabBarIcon";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useAuth } from "@clerk/clerk-expo";
 import BottomBarClassic from "@/components/BottomBarClassic";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function TabLayout() {
   const { colorScheme } = useColorScheme();

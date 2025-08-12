@@ -25,9 +25,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SettingsScreen() {
   const { user } = useUser();
-  const { signOut } = useAuth();
-  const router = useRouter();
-
   const { toggleColorScheme, colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -111,20 +108,7 @@ export default function SettingsScreen() {
 
       <NCard style={styles.card}>
         <Text style={styles.label}>Danger zone</Text>
-        <NButton
-          title="Log out"
-          variant="danger"
-          fullWidth
-          onPress={async () => {
-            try {
-              await signOut();
-              router.replace("/"); // back to Welcome screen (no tabs)
-            } catch (e) {
-              console.log(e);
-              Alert.alert("Sign out failed", "Please try again.");
-            }
-          }}
-        />
+        <LogoutButton />
         <NButton
           title="Clear cache"
           variant="danger"
@@ -143,6 +127,20 @@ export default function SettingsScreen() {
     </ScrollView>
   );
 }
+const LogoutButton = () => {
+  const { signOut } = useAuth();
+  const router = useRouter();
+
+  const doLogout = async () => {
+    await signOut();
+    await AsyncStorage.clear();
+    router.replace("/sign-in");
+  };
+
+  return (
+    <NButton title="Log out" variant="danger" fullWidth onPress={doLogout} />
+  );
+};
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
