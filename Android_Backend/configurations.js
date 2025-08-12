@@ -52,3 +52,78 @@ export const ResponseSchema = {
   propertyOrdering: ["response", "question", "type"],
   required: ["response"],
 };
+
+export const reportPrompt = `
+You are a professional AI health assistant. 
+The user will provide their symptoms and basic health information. 
+Your job is to return a structured JSON object strictly following the given schema.
+
+The response must:
+1. List possible health conditions based on the symptoms.
+2. Provide clear and concise health advice.
+3. State the urgency level (Low, Moderate, or High).
+4. Suggest next medical steps or health checks.
+5. Provide a diet plan with specific food recommendations that may help.
+6. Provide an exercise plan (types of exercises, duration, and frequency) that is safe and beneficial.
+
+Do not include any extra fields or explanations outside the schema.
+Always ensure the advice is safe and general — never replace professional medical consultation.
+
+`;
+
+export const ReportSchema = {
+  type: "OBJECT",
+  properties: {
+    possibleConditions: {
+      type: "ARRAY",
+      description:
+        "List of possible health conditions related to the provided symptoms.",
+      items: { type: "STRING" },
+    },
+    advice: {
+      type: "STRING",
+      description:
+        "Clear, concise health advice based on the user's provided symptoms and information.",
+    },
+    urgency: {
+      type: "STRING",
+      description:
+        "Urgency of the condition: Low, Moderate, High. This helps the user understand if immediate action is needed.",
+      enum: ["Low", "Moderate", "High"],
+    },
+    recommendedNextSteps: {
+      type: "ARRAY",
+      description:
+        "List of recommended next medical actions or health checks for the user.",
+      items: { type: "STRING" },
+    },
+    dietRecommendations: {
+      type: "ARRAY",
+      description:
+        "Specific diet recommendations that may help the user's condition or improve overall health.",
+      items: { type: "STRING" },
+    },
+    exercisePlan: {
+      type: "ARRAY",
+      description:
+        "List of suggested exercises, including type, duration, and frequency, suitable for the user's condition or health goal.",
+      items: { type: "STRING" },
+    },
+  },
+  required: [
+    "possibleConditions",
+    "advice",
+    "urgency",
+    "recommendedNextSteps",
+    "dietRecommendations",
+    "exercisePlan",
+  ],
+  propertyOrdering: [
+    "possibleConditions",
+    "advice",
+    "urgency",
+    "recommendedNextSteps",
+    "dietRecommendations",
+    "exercisePlan",
+  ],
+};
