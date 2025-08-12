@@ -10,11 +10,19 @@ import { useSymptoms } from "../../../context/symptom-context";
 import { NButton } from "@/ui/button";
 import { palette } from "@/design/tokens";
 
+type Urgency = "low" | "moderate" | "high";
+
 const Step5 = ({ anaylsisResult }: { anaylsisResult: AnalysisResult }) => {
   const { resetAll } = useSymptoms();
   const router = useRouter();
   console.log("analysisResult", anaylsisResult);
 
+  const urgencyStyles: Record<Urgency, object> = {
+    low: styles.urgencyLow,
+    moderate: styles.urgencyModerate,
+    high: styles.urgencyHigh,
+  };
+  const urgencyKey = anaylsisResult.urgency.toLowerCase() as Urgency;
   return (
     <MotiView
       from={{ opacity: 0, translateY: 20 }}
@@ -33,17 +41,7 @@ const Step5 = ({ anaylsisResult }: { anaylsisResult: AnalysisResult }) => {
         <Text style={styles.title}>Analysis Results</Text>
 
         <View style={styles.section}>
-          <View
-            style={[
-              styles.urgencyBadge,
-              styles[
-                `urgency${
-                  anaylsisResult.urgency.charAt(0).toUpperCase() +
-                  anaylsisResult.urgency.slice(1)
-                }`
-              ],
-            ]}
-          >
+          <View style={[styles.urgencyBadge, urgencyStyles[urgencyKey]]}>
             <Text style={styles.urgencyText}>
               {anaylsisResult.urgency.toUpperCase()} URGENCY
             </Text>
