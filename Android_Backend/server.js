@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ResponseSchema, systemPrompt } from "./configurations.js";
 import reportRoutes from "./routes/report-routes.js";
+import caltrackRoutes from "./routes/caltrack-route.js";
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ app.use(
     origin: "*",
   })
 );
-app.use(express.json({ limit: "1mb" }));
+app.use(express.json({ limit: "100mb" }));
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const model = genAI.getGenerativeModel({
@@ -59,7 +60,7 @@ app.post("/chat", async (req, res) => {
       systemInstruction: { role: "system", parts: [{ text: SYSTEM_PROMPT }] },
       history: historyFromClient.slice(-20),
       generationConfig: {
-        maxOutputTokens: 2048,
+        maxOutputTokens: 5048,
         temperature: 0.5,
         responseMimeType: "application/json",
         responseSchema,
@@ -88,6 +89,8 @@ app.post("/chat", async (req, res) => {
 });
 
 app.use("/api", reportRoutes);
+
+app.use("/api", caltrackRoutes);
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on http://0.0.0.0:${PORT}`);

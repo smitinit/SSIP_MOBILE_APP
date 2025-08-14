@@ -80,6 +80,12 @@ export const ReportSchema = {
         "List of possible health conditions related to the provided symptoms.",
       items: { type: "STRING" },
     },
+    possibleDiseases: {
+      type: "ARRAY",
+      description:
+        "List of diseases that may be associated with the given symptoms.",
+      items: { type: "STRING" },
+    },
     advice: {
       type: "STRING",
       description:
@@ -91,22 +97,80 @@ export const ReportSchema = {
         "Urgency of the condition: Low, Moderate, High. This helps the user understand if immediate action is needed.",
       enum: ["Low", "Moderate", "High"],
     },
+    riskFactors: {
+      type: "ARRAY",
+      description:
+        "Risk factors associated with the user's condition, lifestyle, or symptoms.",
+      items: { type: "STRING" },
+    },
+    doList: {
+      type: "ARRAY",
+      description:
+        "Recommended actions or habits that the user should follow to improve their condition.",
+      items: { type: "STRING" },
+    },
+    dontList: {
+      type: "ARRAY",
+      description:
+        "Actions, foods, or habits that the user should avoid to prevent worsening of condition.",
+      items: { type: "STRING" },
+    },
     recommendedNextSteps: {
       type: "ARRAY",
       description:
         "List of recommended next medical actions or health checks for the user.",
       items: { type: "STRING" },
     },
-    dietRecommendations: {
+    preventiveMeasures: {
       type: "ARRAY",
       description:
-        "Specific diet recommendations that may help the user's condition or improve overall health.",
+        "Preventive lifestyle or medical measures to avoid progression of condition or recurrence.",
       items: { type: "STRING" },
+    },
+    dietRecommendations: {
+      type: "OBJECT",
+      description:
+        "Specific diet recommendations structured into meals for clarity.",
+      properties: {
+        breakfast: {
+          type: "ARRAY",
+          items: { type: "STRING" },
+          description: "Recommended breakfast options.",
+        },
+        lunch: {
+          type: "ARRAY",
+          items: { type: "STRING" },
+          description: "Recommended lunch options.",
+        },
+        dinner: {
+          type: "ARRAY",
+          items: { type: "STRING" },
+          description: "Recommended dinner options.",
+        },
+        snacks: {
+          type: "ARRAY",
+          items: { type: "STRING" },
+          description: "Healthy snack recommendations.",
+        },
+      },
+      required: ["breakfast", "lunch", "dinner"],
     },
     exercisePlan: {
       type: "ARRAY",
       description:
         "List of suggested exercises, including type, duration, and frequency, suitable for the user's condition or health goal.",
+      items: { type: "STRING" },
+    },
+    ayurvedicMedications: {
+      type: "ARRAY",
+      description:
+        "List of suggested Ayurvedic or herbal remedies that may complement the user's condition.",
+      items: { type: "STRING" },
+    },
+    followUpActions: {
+      type: "ARRAY",
+      description:
+        "Recommended follow-up actions, such as doctor visits, lab tests, or regular monitoring.",
       items: { type: "STRING" },
     },
   },
@@ -120,10 +184,125 @@ export const ReportSchema = {
   ],
   propertyOrdering: [
     "possibleConditions",
+    "possibleDiseases",
     "advice",
     "urgency",
+    "riskFactors",
+    "doList",
+    "dontList",
     "recommendedNextSteps",
+    "preventiveMeasures",
     "dietRecommendations",
     "exercisePlan",
+    "ayurvedicMedications",
+    "followUpActions",
+  ],
+};
+
+export const nutritionPrompt = `
+You are a professional AI nutrition assistant.  
+The user will upload an image of food, and your task is to analyze it and return a structured JSON strictly following the given schema.  
+
+Rules:  
+1. Accurately identify the type of food in the image.  
+2. Estimate the total calories and provide a per-serving breakdown if possible.  
+3. Provide macronutrient details: protein, carbohydrates, fats.  
+4. Include important micronutrients where relevant (fiber, sugar, sodium, vitamins, etc.).  
+5. Provide a brief health assessment of the food (is it balanced, high in sugar, high in protein, etc.).  
+6. Suggest healthier alternatives or modifications if the food is unhealthy.  
+7. Always return results in JSON only, with no extra text or explanation.  
+8. Ensure values are safe estimates — never claim 100% accuracy.  
+
+If the image is not food-related, return:  
+{
+  "foodName": null,
+  "calories": null,
+  "macronutrients": null,
+  "micronutrients": null,
+  "healthAssessment": "Sorry, please upload a clear food image for analysis.",
+  "suggestions": []
+}
+`;
+
+export const NutritionSchema = {
+  type: "OBJECT",
+  properties: {
+    foodName: {
+      type: "STRING",
+      description: "The identified food or dish name from the image.",
+      nullable: true,
+    },
+    calories: {
+      type: "NUMBER",
+      description: "Estimated total calories of the food portion in kcal.",
+      nullable: true,
+    },
+    macronutrients: {
+      type: "OBJECT",
+      description: "Estimated macronutrient breakdown of the food.",
+      properties: {
+        protein: { type: "NUMBER", description: "Protein in grams." },
+        carbohydrates: {
+          type: "NUMBER",
+          description: "Carbohydrates in grams.",
+        },
+        fat: { type: "NUMBER", description: "Fat in grams." },
+      },
+      required: ["protein", "carbohydrates", "fat"],
+      nullable: true,
+    },
+    micronutrients: {
+      type: "OBJECT",
+      description: "Key micronutrients if identifiable.",
+      properties: {
+        fiber: {
+          type: "NUMBER",
+          description: "Fiber in grams.",
+          nullable: true,
+        },
+        sugar: {
+          type: "NUMBER",
+          description: "Sugar in grams.",
+          nullable: true,
+        },
+        sodium: {
+          type: "NUMBER",
+          description: "Sodium in milligrams.",
+          nullable: true,
+        },
+        vitamins: {
+          type: "ARRAY",
+          description: "List of notable vitamins found in the food.",
+          items: { type: "STRING" },
+          nullable: true,
+        },
+      },
+      nullable: true,
+    },
+    healthAssessment: {
+      type: "STRING",
+      description: "Brief assessment of how healthy or balanced the food is.",
+    },
+    suggestions: {
+      type: "ARRAY",
+      description: "Healthier alternatives or modifications.",
+      items: { type: "STRING" },
+    },
+  },
+  required: [
+    "foodName",
+    "calories",
+    "macronutrients",
+    "micronutrients",
+    "healthAssessment",
+    "suggestions",
+  ],
+  propertyOrdering: [
+    "foodName",
+    "calories",
+    "macronutrients",
+    "micronutrients",
+    "healthAssessment",
+    "suggestions",
   ],
 };
