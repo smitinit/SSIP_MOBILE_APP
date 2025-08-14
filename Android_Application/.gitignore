@@ -9,3 +9,4 @@ expo-env.d.ts
 node_modules
 .expo
 testing
+update-dep-check.js
