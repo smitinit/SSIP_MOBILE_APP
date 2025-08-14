@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     backgroundColor: palette.bg,
     gap: spacing.md,
     alignItems: "stretch",
+    flex: 1,
   },
   item: {
     flexDirection: "row",

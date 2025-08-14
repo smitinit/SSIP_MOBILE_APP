@@ -112,7 +112,7 @@ const Step4 = () => {
       }
 
       const result = await response.json();
-      console.log("result", result);
+      // console.log("result", result);
 
       setAnalysisResult(result);
     } catch (error) {

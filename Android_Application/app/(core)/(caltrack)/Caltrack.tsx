@@ -97,7 +97,7 @@ function NutritionAnalyzer() {
       const result = await response.json();
 
       if (response.ok) {
-        console.log("result received", result);
+        // console.log("result received", result);
 
         if (result.points) {
           setResponsePoints(result.points);
