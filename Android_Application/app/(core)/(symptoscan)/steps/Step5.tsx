@@ -1,12 +1,11 @@
-import { Progress } from "@/components/Progress";
 import { MotiView, ScrollView } from "moti";
 import React from "react";
-import { Alert, Button, Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Easing } from "react-native-reanimated";
 
 import { useRouter } from "expo-router";
 import { AnalysisResult } from "./Step4";
-import { useSymptoms } from "../../../context/symptom-context";
+import { useSymptoms } from "../../../../context/symptom-context";
 import { NButton } from "@/ui/button";
 import { palette } from "@/design/tokens";
 

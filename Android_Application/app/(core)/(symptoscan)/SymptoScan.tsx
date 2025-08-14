@@ -68,11 +68,9 @@ const SymptoScan = () => {
             Our core technology that analyzes your symptoms and provides
             accurate health insights.
           </Text>
-
           <View style={styles.sectionHeaderWrap}>
             <Text style={styles.sectionHeader}>How SymptomScan Works</Text>
           </View>
-
           <View style={styles.features}>
             {features.map((f, i) => (
               <FeatureItem
@@ -85,7 +83,6 @@ const SymptoScan = () => {
               />
             ))}
           </View>
-
           <Pressable
             onPress={() => router.push("/(core)/(symptoscan)/steps/Step1")}
             accessibilityRole="button"
@@ -93,6 +90,14 @@ const SymptoScan = () => {
             style={({ pressed }) => [styles.cta, pressed && { opacity: 0.9 }]}
           >
             <Text style={styles.ctaText}>Try SymptomScan</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => router.push("/(tabs)/home")}
+            accessibilityRole="button"
+            accessibilityLabel="Try SymptomScan"
+            style={({ pressed }) => [styles.cta, pressed && { opacity: 0.9 }]}
+          >
+            <Text style={styles.ctaText}>Go to home</Text>
           </Pressable>
         </MotiView>
       </ScrollView>

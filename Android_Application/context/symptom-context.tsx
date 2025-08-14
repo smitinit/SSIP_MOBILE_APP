@@ -11,8 +11,8 @@ import {
   BODY_AREAS,
   type BodyArea,
   type Symptom,
-} from "../(core)/(symptoscan)/steps/data/body-area";
-import { MEDICAL_CONDITIONS } from "../(core)/(symptoscan)/steps/data/options";
+} from "../app/(core)/(symptoscan)/steps/data/body-area";
+import { MEDICAL_CONDITIONS } from "../app/(core)/(symptoscan)/steps/data/options";
 
 // Demographics and Lifestyle shapes
 export type Demographics = {

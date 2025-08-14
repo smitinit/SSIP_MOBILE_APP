@@ -1,76 +1,85 @@
-import { Tabs, Redirect } from "expo-router";
-import { TabBarIcon } from "@/components/TabBarIcon";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import React, { useState } from "react";
+import { View, useWindowDimensions } from "react-native";
+import { TabView, SceneMap } from "react-native-tab-view";
+import { Provider as PaperProvider, Portal } from "react-native-paper";
+import { ModalContext } from "../../context/modal-provider";
 import { useAuth } from "@clerk/clerk-expo";
+import { Redirect } from "expo-router";
+
 import BottomBarClassic from "@/components/BottomBarClassic";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import Dialog from "@/components/QuickActionDialog";
+import HomeScreen from "@/screens/HomeScreen";
+import ChatBotScreen from "@/screens/ChatBotScreen";
+import NotificationsScreen from "@/screens/NotificationsScreen";
+import SettingsScreen from "@/screens/SettingsScreen";
 
-export default function TabLayout() {
-  const { colorScheme } = useColorScheme();
+export default function SwipeableTabsLayout() {
   const { isSignedIn } = useAuth();
+  const layout = useWindowDimensions();
+  const [isDialogVisible, setDialogVisible] = useState(false);
 
-  // Define colors based on colorScheme
-  const tabBarActiveTintColor = colorScheme === "dark" ? "#fff" : "#222";
-  const tabBarInactiveTintColor = colorScheme === "dark" ? "#888" : "#aaa";
-  const tabBarStyle = {
-    backgroundColor: colorScheme === "dark" ? "#18181b" : "#fff",
-  };
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: "home", title: "Home", icon: "grid-outline" },
+    { key: "chat", title: "Chat", icon: "chatbubble-outline" },
+    {
+      key: "notifications",
+      title: "Notifications",
+      icon: "notifications-outline",
+    },
+    { key: "settings", title: "Settings", icon: "cog-outline" },
+  ]);
 
-  // Hide tabs until authenticated
+  const renderScene = SceneMap({
+    home: HomeScreen,
+    chat: ChatBotScreen,
+    notifications: NotificationsScreen,
+    settings: SettingsScreen,
+  });
+
   if (!isSignedIn) {
     return <Redirect href="/(auth)/sign-in" />;
   }
 
   return (
-    <Tabs
-      tabBar={(props) => <BottomBarClassic {...props} />}
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor,
-        tabBarInactiveTintColor,
-        tabBarStyle,
-      }}
-    >
-      <Tabs.Screen
-        name="home"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => <TabBarIcon name="grid" color={color} />,
+    <PaperProvider>
+      <ModalContext.Provider
+        value={{
+          open: () => setDialogVisible(true),
+          close: () => setDialogVisible(false),
         }}
-      />
-      <Tabs.Screen
-        name="dashboard"
-        options={{
-          title: "Medi_Chat",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "chat" : "chat-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="notifications"
-        options={{
-          title: "Notifications",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "bell" : "bell-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: "Settings",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? "cog" : "cog-outline"} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+      >
+        <View style={{ flex: 1 }}>
+          {/* Swipeable content */}
+          <TabView
+            navigationState={{ index, routes }}
+            renderScene={renderScene}
+            onIndexChange={setIndex}
+            initialLayout={{ width: layout.width }}
+            swipeEnabled
+            renderTabBar={() => null}
+          />
+
+          {/* Custom bottom bar */}
+          <BottomBarClassic
+            state={{ index, routes }}
+            navigation={{
+              navigate: (tabKey) => {
+                const idx = routes.findIndex((r) => r.key === tabKey);
+                if (idx !== -1) setIndex(idx);
+              },
+            }}
+          />
+        </View>
+
+        {/* Portal for modals */}
+        <Portal>
+          <Dialog
+            visible={isDialogVisible}
+            onClose={() => setDialogVisible(false)}
+          />
+        </Portal>
+      </ModalContext.Provider>
+    </PaperProvider>
   );
 }

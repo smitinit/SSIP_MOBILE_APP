@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { NButton } from "@/ui/button";
 import { spacing } from "@/design/tokens";
-import { useWizard } from "../../context/onboarding-questions";
+import { useWizard } from "../../../context/onboarding-questions";
 import { StepHeader } from "@/components/StepHeader";
 
 export default function Step3() {

@@ -11,7 +11,7 @@ import {
 import { useRouter } from "expo-router";
 import { MotiView } from "moti";
 import { Easing } from "react-native-reanimated";
-import { useSymptoms } from "../../../context/symptom-context";
+import { useSymptoms } from "../../../../context/symptom-context";
 import { DIET_OPTIONS, EXERCISE_OPTIONS, SLEEP_OPTIONS } from "./data/options";
 
 export default function Lifestyle() {

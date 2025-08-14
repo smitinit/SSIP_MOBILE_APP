@@ -2,7 +2,7 @@ import { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useWizard } from "../../context/onboarding-questions";
+import { useWizard } from "../../../context/onboarding-questions";
 import { StepHeader } from "@/components/StepHeader";
 import { NButton } from "@/ui/button";
 import { palette, spacing } from "@/design/tokens";

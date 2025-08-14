@@ -17,8 +17,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.LifeTNative",
-      "softwareKeyboardLayoutMode": "resize"
+      "package": "com.anonymous.LifeTNative"
     },
     "web": {
       "bundler": "metro",

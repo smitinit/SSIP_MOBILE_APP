@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { WizardProvider } from "../../context/onboarding-questions";
+import { WizardProvider } from "../../../context/onboarding-questions";
 
 export default function FlowLayout() {
   return (

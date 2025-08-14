@@ -1,152 +1,106 @@
-"use client";
-
-import { useState } from "react";
-import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  GestureResponderEvent,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { palette } from "@/design/tokens";
-import ActionModal from "@/components/ActionModal";
+import { useGlobalModal } from "../../context/modal-provider";
+
+type Route = {
+  key: string;
+  title: string;
+  icon: keyof typeof Ionicons.glyphMap | string;
+};
+
+type BottomBarClassicProps = {
+  state: {
+    index: number;
+    routes: Route[];
+  };
+  navigation: {
+    navigate: (tabKey: string) => void;
+  };
+};
 
 const CENTER_BLUE = "#4F46E5";
 
 export default function BottomBarClassic({
   state,
-  descriptors,
   navigation,
-}: any) {
-  const routes: any[] = state.routes ?? [];
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => {
-    if (!open) {
-      setOpen(true);
-    }
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+}: BottomBarClassicProps) {
+  const { index, routes } = state;
+  const { open } = useGlobalModal();
 
   const left = routes.slice(0, 2);
   const right = routes.slice(2);
 
-  const renderItem = (route: any, index: number) => {
-    const { options } = descriptors[route.key];
-    const label =
-      options.tabBarLabel !== undefined
-        ? options.tabBarLabel
-        : options.title !== undefined
-        ? options.title
-        : route.name;
+  const renderItem = (route: Route) => {
+    const realIndex = routes.findIndex((r) => r.key === route.key);
+    const isFocused = realIndex === index;
+    const color = isFocused ? palette.primary : "#9CA3AF";
 
-    const isFocused = state.index === routes.indexOf(route);
-
-    const onPress = () => {
-      const event = navigation.emit({
-        type: "tabPress",
-        target: route.key,
-        canPreventDefault: true,
-      });
-
-      if (!isFocused && !event.defaultPrevented) {
-        navigation.navigate(route.name);
-      }
+    const onPress = (e: GestureResponderEvent) => {
+      e.preventDefault();
+      navigation.navigate(route.key);
     };
 
-    const onLongPress = () => {
-      navigation.emit({ type: "tabLongPress", target: route.key });
-    };
+    const showGreenDot = realIndex === routes.length - 1;
 
-    const ACTIVE = palette.primary;
-    const INACTIVE = "#9CA3AF";
-    const color = isFocused ? ACTIVE : INACTIVE;
-
-    const icon =
-      typeof options.tabBarIcon === "function"
-        ? options.tabBarIcon({ focused: isFocused, color, size: 22 })
-        : defaultIconForRoute(route.name, color);
-
-    const showGreenDot = index === routes.length - 1;
+    // If focused, use the filled icon (remove "-outline")
+    const iconName = isFocused
+      ? (route.icon.replace("-outline", "") as keyof typeof Ionicons.glyphMap)
+      : (route.icon as keyof typeof Ionicons.glyphMap);
 
     return (
       <Pressable
         key={route.key}
-        accessibilityRole="button"
-        accessibilityState={isFocused ? { selected: true } : {}}
-        accessibilityLabel={options.tabBarAccessibilityLabel}
-        testID={options.tabBarTestID}
         onPress={onPress}
-        onLongPress={onLongPress}
         style={styles.item}
         android_ripple={{ color: "rgba(0,0,0,0.06)", borderless: true }}
       >
         <View style={styles.iconWrap}>
-          {icon}
-          {showGreenDot ? <View style={styles.dot} /> : null}
+          <Ionicons name={iconName} size={22} color={color} />
+          {showGreenDot && <View style={styles.dot} />}
         </View>
         <Text style={[styles.label, { color }]} numberOfLines={1}>
-          {label}
+          {route.title}
         </Text>
       </Pressable>
     );
   };
 
   return (
-    <>
-      <View style={styles.container}>
-        {/* Left items */}
-        <View style={styles.sideGroup}>
-          {left.map((r, i) => renderItem(r, i))}
+    <View style={styles.container}>
+      {/* Left items */}
+      <View style={styles.sideGroup}>{left.map(renderItem)}</View>
+
+      {/* Center "+" button */}
+      <Pressable
+        onPress={open}
+        style={({ pressed }) => [
+          styles.centerBtn,
+          pressed &&
+            Platform.select({
+              android: { opacity: 0.85 },
+              default: { transform: [{ scale: 0.96 }] },
+            }),
+        ]}
+      >
+        <View style={styles.centerHalo} />
+        <View style={styles.centerInner}>
+          <Ionicons name="add" size={22} color={CENTER_BLUE} />
         </View>
+      </Pressable>
 
-        {/* Center "+" button */}
-        <Pressable
-          // onPress={handleOpen}
-          style={({ pressed }) => [
-            styles.centerBtn,
-            pressed &&
-              Platform.select({
-                android: { opacity: 0.85 },
-                default: { transform: [{ scale: 0.96 }] },
-              }),
-          ]}
-        >
-          <View style={styles.centerHalo} />
-          <View style={styles.centerInner}>
-            <Ionicons name="add" size={22} color={CENTER_BLUE} />
-          </View>
-        </Pressable>
-
-        {/* Right items */}
-        <View style={styles.sideGroup}>
-          {right.map((r, i) => renderItem(r, left.length + i))}
-        </View>
-      </View>
-
-      {/* Action Modal */}
-      <ActionModal show={open} handleClose={handleClose} />
-    </>
+      {/* Right items */}
+      <View style={styles.sideGroup}>{right.map(renderItem)}</View>
+    </View>
   );
-}
-
-function defaultIconForRoute(name: string, color: string) {
-  const lower = name.toLowerCase();
-  if (
-    lower.includes("home") ||
-    lower === "index" ||
-    lower.includes("assistant")
-  ) {
-    return <Ionicons name="home-outline" size={22} color={color} />;
-  }
-  if (lower.includes("dashboard") || lower.includes("analytics")) {
-    return <Ionicons name="stats-chart-outline" size={22} color={color} />;
-  }
-  if (lower.includes("notifications")) {
-    return <Ionicons name="notifications-outline" size={22} color={color} />;
-  }
-  if (lower.includes("settings")) {
-    return <Ionicons name="settings-outline" size={22} color={color} />;
-  }
-  return <Ionicons name="ellipse-outline" size={22} color={color} />;
 }
 
 const BAR_BG = "#FFFFFF";

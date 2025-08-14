@@ -129,13 +129,13 @@ export default function UserDetailsScreen() {
 
   return (
     <View style={styles.root}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.helper}>
           Fill in your basic details to get started.
         </Text>
 
         <View style={{ width: 36 }} />
-      </View>
+      </View> */}
 
       {/* Full name (underline) */}
       <Text style={styles.label}>Enter Full name</Text>
@@ -161,6 +161,7 @@ export default function UserDetailsScreen() {
       </View>
 
       {/* Gender chips */}
+      <Text style={[styles.label, { marginTop: spacing.lg }]}>Gender</Text>
       <View style={styles.genderRow}>
         <GenderChip
           label="Male"

@@ -1,14 +1,8 @@
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 
 import { spacing } from "@/design/tokens";
-import { useWizard } from "../../context/onboarding-questions";
+import { useWizard } from "../../../context/onboarding-questions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ChoosePlan() {

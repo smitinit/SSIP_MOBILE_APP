@@ -9,7 +9,7 @@ import {
 import { useRouter } from "expo-router";
 import { MotiView } from "moti";
 import { Easing } from "react-native-reanimated";
-import { useSymptoms } from "../../../context/symptom-context";
+import { useSymptoms } from "../../../../context/symptom-context"; 
 import { GENDER_OPTIONS, MEDICAL_CONDITIONS } from "./data/options";
 
 const Step2 = () => {

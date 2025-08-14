@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { MotiView } from "moti";
 import { Easing } from "react-native-reanimated";
-import { useSymptoms } from "../../../../app/context/symptom-context";
+import { useSymptoms } from "../../../../context/symptom-context";
 import { router } from "expo-router";
 
 export default function SymptoScan() {

@@ -5,21 +5,22 @@ import {
   Text,
   TouchableOpacity,
   type ViewStyle,
-} from "react-native"
-import { palette, radii, spacing } from "@/design/tokens"
+} from "react-native";
+import { palette, radii, spacing } from "@/design/tokens";
+import { ReactElement } from "react";
 
-type Variant = "primary" | "secondary" | "ghost" | "danger"
-type Size = "md" | "lg"
+type Variant = "primary" | "secondary" | "ghost" | "danger";
+type Size = "md" | "lg";
 
 interface ButtonProps {
-  title: string
-  onPress?: (e: GestureResponderEvent) => void
-  variant?: Variant
-  size?: Size
-  disabled?: boolean
-  loading?: boolean
-  fullWidth?: boolean
-  style?: ViewStyle
+  title: string | ReactElement;
+  onPress?: (e: GestureResponderEvent) => void;
+  variant?: Variant;
+  size?: Size;
+  disabled?: boolean;
+  loading?: boolean;
+  fullWidth?: boolean;
+  style?: ViewStyle;
 }
 
 export function NButton({
@@ -32,16 +33,22 @@ export function NButton({
   fullWidth,
   style,
 }: ButtonProps) {
-  const styles = getStyles({ variant, size, fullWidth, disabled })
+  const styles = getStyles({ variant, size, fullWidth, disabled });
   return (
-    <TouchableOpacity disabled={disabled || loading} onPress={onPress} style={[styles.base, style]}>
+    <TouchableOpacity
+      disabled={disabled || loading}
+      onPress={onPress}
+      style={[styles.base, style]}
+    >
       {loading ? (
-        <ActivityIndicator color={variant === "secondary" ? palette.text : "#fff"} />
+        <ActivityIndicator
+          color={variant === "secondary" ? palette.text : "#fff"}
+        />
       ) : (
         <Text style={styles.text}>{title}</Text>
       )}
     </TouchableOpacity>
-  )
+  );
 }
 
 function getStyles({
@@ -50,20 +57,20 @@ function getStyles({
   fullWidth,
   disabled,
 }: {
-  variant: Variant
-  size: Size
-  fullWidth?: boolean
-  disabled?: boolean
+  variant: Variant;
+  size: Size;
+  fullWidth?: boolean;
+  disabled?: boolean;
 }) {
   const base: ViewStyle = {
     backgroundColor:
       variant === "primary"
         ? palette.primary
         : variant === "secondary"
-          ? "#fff"
-          : variant === "danger"
-            ? palette.danger
-            : "transparent",
+        ? "#fff"
+        : variant === "danger"
+        ? palette.danger
+        : "transparent",
     borderRadius: radii.lg,
     paddingVertical: size === "lg" ? spacing.md : spacing.sm,
     paddingHorizontal: spacing.xl,
@@ -72,11 +79,11 @@ function getStyles({
     alignItems: "center",
     opacity: disabled ? 0.6 : 1,
     width: fullWidth ? "100%" : undefined,
-  }
+  };
   const text = {
     color: variant === "secondary" ? palette.text : "#fff",
     fontSize: size === "lg" ? 16 : 14,
     fontWeight: "700" as const,
-  }
-  return StyleSheet.create({ base, text })
+  };
+  return StyleSheet.create({ base, text });
 }

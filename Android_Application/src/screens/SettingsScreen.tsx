@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   ScrollView,
   StyleSheet,
@@ -130,15 +131,31 @@ export default function SettingsScreen() {
 const LogoutButton = () => {
   const { signOut } = useAuth();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const doLogout = async () => {
-    await signOut();
-    await AsyncStorage.clear();
-    router.replace("/sign-in");
+    if (loading) return; // prevent double taps
+    setLoading(true);
+    try {
+      await signOut();
+      router.replace("/welcome");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <NButton title="Log out" variant="danger" fullWidth onPress={doLogout} />
+    <NButton
+      title={
+        loading ? <ActivityIndicator size="small" color="#fff" /> : "Log out"
+      }
+      variant="danger"
+      fullWidth
+      disabled={loading}
+      onPress={doLogout}
+    />
   );
 };
 
