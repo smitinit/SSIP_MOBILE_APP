@@ -13,6 +13,7 @@ import { MotiView } from "moti";
 import { Easing } from "react-native-reanimated";
 import { useSymptoms } from "../../../../context/symptom-context";
 import { router } from "expo-router";
+import { palette } from "@/design/tokens";
 
 export default function SymptoScan() {
   const {
@@ -227,10 +228,10 @@ export default function SymptoScan() {
 const styles = StyleSheet.create({
   container: { padding: 16, paddingTop: 10, backgroundColor: "transparent" },
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: palette.bg,
     borderRadius: 0,
     paddingVertical: 20,
-    paddingHorizontal: 16,
+    paddingHorizontal: 5,
     // borderWidth: 0,
     // borderColor: "#E5E7EB",
     // shadowColor: "#000",

@@ -12,7 +12,7 @@ export const generateReport = async (req, res) => {
     if (!data) {
       return res.status(400).json({ error: "Missing 'data' in request body." });
     }
-    console.log("The data that came from the front end:", data);
+    // console.log("The data that came from the front end:", data);
 
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
@@ -41,7 +41,7 @@ export const generateReport = async (req, res) => {
     // console.log("rawReply:", rawReply);
 
     const parsedReply = JSON.parse(rawReply);
-    console.log("parsedReply:", parsedReply);
+    // console.log("parsedReply:", parsedReply);
 
     res.status(200).json(parsedReply);
   } catch (e) {
