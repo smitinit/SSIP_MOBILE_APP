@@ -19,10 +19,21 @@ import Step5 from "./Step5";
 export type AnalysisResult = {
   possibleConditions: string[];
   advice: string;
-  urgency: string;
+  urgency: "Low" | "Moderate" | "High";
   recommendedNextSteps: string[];
-  dietRecommendations: string[];
+  dos: string[];
+  donts: string[];
+  followUpActions: string[];
+  riskFactors: string[];
+  possibleDiseases: string[];
+  preventiveMeasures: string[];
+  dietRecommendations: {
+    breakfast: string[];
+    lunch: string[];
+    dinner: string[];
+  };
   exercisePlan: string[];
+  ayurvedicMedications: string[];
 };
 
 const Step4 = () => {
@@ -84,7 +95,7 @@ const Step4 = () => {
     try {
       const payload = createAnalysisPayload();
 
-      console.log("payload", payload);
+      // console.log("payload", payload);
 
       const response = await fetch(`${BACKEND_URL}/api/generate-report`, {
         method: "POST",
@@ -101,6 +112,8 @@ const Step4 = () => {
       }
 
       const result = await response.json();
+      console.log("result", result);
+
       setAnalysisResult(result);
     } catch (error) {
       console.error("Analysis failed:", error);
@@ -139,7 +152,7 @@ const Step4 = () => {
   }
 
   if (analysisResult && !isAnalyzing) {
-    return <Step5 anaylsisResult={analysisResult} />;
+    return <Step5 analysisResult={analysisResult} />;
   }
 
   return (
@@ -245,13 +258,6 @@ const Step4 = () => {
           <Pressable
             style={styles.primaryButton}
             onPress={() => {
-              console.log(
-                "Analyze Symptoms :",
-                selectedSymptoms,
-                demographics,
-                lifestyle
-              );
-
               analyzeSymptoms();
             }}
           >
